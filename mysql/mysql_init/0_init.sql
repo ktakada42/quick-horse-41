@@ -63,6 +63,12 @@ CREATE TABLE IF NOT EXISTS `request` (
     PRIMARY KEY (`request_id`)
 );
 
+CREATE TABLE IF NOT EXISTS `requested_book` (
+    `book_id` VARCHAR(26) NOT NULL,
+    `processed` BOOLEAN NOT NULL,
+    PRIMARY KEY (`book_id`)
+);
+
 CREATE TABLE IF NOT EXISTS `review` (
     `review_id` VARCHAR(26) NOT NULL,
     `book_id` VARCHAR(26) NOT NULL,
