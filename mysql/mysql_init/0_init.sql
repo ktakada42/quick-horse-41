@@ -22,3 +22,9 @@ CREATE TABLE IF NOT EXISTS `book` (
     `cover_id` VARCHAR(26),
     PRIMARY KEY (`book_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `office` (
+    `office_id` VARCHAR(26) NOT NULL,
+    `office_name` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`office_id`)
+);
