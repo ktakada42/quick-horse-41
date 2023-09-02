@@ -28,3 +28,12 @@ CREATE TABLE IF NOT EXISTS `office` (
     `office_name` VARCHAR(50) NOT NULL,
     PRIMARY KEY (`office_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `office_book` (
+    `office_book_id` VARCHAR(26) NOT NULL,
+    `office_id` VARCHAR(26) NOT NULL,
+    `book_id` VARCHAR(26) NOT NULL,
+    `reg_date` DATETIME NOT NULL,
+    `available` BOOLEAN NOT NULL,
+    PRIMARY KEY (`office_book_id`)
+);
