@@ -84,3 +84,10 @@ CREATE TABLE IF NOT EXISTS `tag` (
     `description` VARCHAR(20),
     PRIMARY KEY (`tag_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `book_tag` (
+    `book_tag_id` VARCHAR(26) NOT NULL,
+    `tag_id` VARCHAR(26) NOT NULL,
+    `book_id` VARCHAR(26) NOT NULL,
+    PRIMARY KEY (`book_tag_id`)
+);
