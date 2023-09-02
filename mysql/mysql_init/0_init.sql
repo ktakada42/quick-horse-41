@@ -37,3 +37,12 @@ CREATE TABLE IF NOT EXISTS `office_book` (
     `available` BOOLEAN NOT NULL,
     PRIMARY KEY (`office_book_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `borrow_history` (
+    `history_id` VARCHAR(26) NOT NULL,
+    `book_id` VARCHAR(26) NOT NULL,
+    `public_user_id` VARCHAR(50) NOT NULL,
+    `borrow_date` DATETIME NOT NULL,
+    `return_date` DATETIME NOT NULL,
+    PRIMARY KEY (`history_id`)
+);
