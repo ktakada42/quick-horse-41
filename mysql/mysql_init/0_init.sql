@@ -46,3 +46,10 @@ CREATE TABLE IF NOT EXISTS `borrow_history` (
     `return_date` DATETIME NOT NULL,
     PRIMARY KEY (`history_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `borrowed_book` (
+    `office_book_id` VARCHAR(26) NOT NULL,
+    `public_user_id` VARCHAR(50) NOT NULL,
+    `borrow_date` DATETIME NOT NULL,
+    PRIMARY KEY (`office_book_id`)
+);
