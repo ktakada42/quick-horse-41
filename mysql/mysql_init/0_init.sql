@@ -62,3 +62,13 @@ CREATE TABLE IF NOT EXISTS `request` (
     `reg_date` DATETIME NOT NULL,
     PRIMARY KEY (`request_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `review` (
+    `review_id` VARCHAR(26) NOT NULL,
+    `book_id` VARCHAR(26) NOT NULL,
+    `public_user_id` VARCHAR(50) NOT NULL,
+    `rating` TINYINT,
+    `review` VARCHAR(500),
+    `reg_date` DATETIME NOT NULL,
+    PRIMARY KEY (`review_id`)
+);
