@@ -78,3 +78,9 @@ CREATE TABLE IF NOT EXISTS `review` (
     `reg_date` DATETIME NOT NULL,
     PRIMARY KEY (`review_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `tag` (
+    `tag_id` VARCHAR(26) NOT NULL,
+    `description` VARCHAR(20),
+    PRIMARY KEY (`tag_id`)
+);
