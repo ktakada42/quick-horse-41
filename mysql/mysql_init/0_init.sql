@@ -11,3 +11,14 @@ CREATE TABLE IF NOT EXISTS `user` (
     `isAdmin` BOOLEAN NOT NULL,
     PRIMARY KEY (`private_user_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `book` (
+    `book_id` VARCHAR(26) NOT NULL,
+    `isbn` VARCHAR(13),
+    `title` VARCHAR(100) NOT NULL,
+    `author` VARCHAR(100) NOT NULL,
+    `publisher` VARCHAR(100),
+    `publish_date` VARCHAR(8) NOT NULL,
+    `cover_id` VARCHAR(26),
+    PRIMARY KEY (`book_id`)
+);
