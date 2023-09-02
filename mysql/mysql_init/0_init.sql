@@ -53,3 +53,12 @@ CREATE TABLE IF NOT EXISTS `borrowed_book` (
     `borrow_date` DATETIME NOT NULL,
     PRIMARY KEY (`office_book_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `request` (
+    `request_id` VARCHAR(26) NOT NULL,
+    `book_id` VARCHAR(26) NOT NULL,
+    `public_user_id` VARCHAR(50) NOT NULL,
+    `comment` VARCHAR(500),
+    `reg_date` DATETIME NOT NULL,
+    PRIMARY KEY (`request_id`)
+);
