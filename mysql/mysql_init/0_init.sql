@@ -1,5 +1,11 @@
 CREATE DATABASE IF NOT EXISTS app;
 
+CREATE TABLE IF NOT EXISTS `image` (
+    `image_id` VARCHAR(26) NOT NULL,
+    `path` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`image_id`)
+);
+
 CREATE TABLE IF NOT EXISTS `user` (
     `private_user_id` VARCHAR(26) NOT NULL,
     `public_user_id` VARCHAR(50) NOT NULL,
