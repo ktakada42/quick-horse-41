@@ -1,0 +1,1681 @@
+openapi: 3.0.0
+info:
+  title: API 仕様書
+  description: |
+    API仕様書  
+    リポジトリ: https://github.com/ktakada42/quick-horse-41
+
+  # termsOfService: http://swagger.io/terms/
+  contact:
+    email: ktakada950711@gmail.com
+  license:
+    name: MIT License
+  version: 1.0.0
+# externalDocs:
+#   description: Find out more about Swagger
+#   url: http://swagger.io
+# servers:
+#   - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name: login
+    description: ログインAPI
+  - name: logout
+    description: ログアウトAPI
+  - name: books
+    description: 本に関するAPI
+  - name: users
+    description: ユーザーに関するAPI
+  - name: reviews
+    description: レビューに関するAPI
+  - name: histories
+    description: 借り出し履歴に関するAPI
+  - name: images
+    description: 画像に関するAPI
+  - name: offices
+    description: オフィスに関するAPI
+paths:
+  /api/v1/login:
+    post:
+      tags:
+        - login
+      summary: ログイン
+      description: |
+        ログインを実行します  
+        ログインに成功した場合は、アクセストークンとしてJWTがレスポンスボディの一部として返されます  
+        既にログイン済みの場合、既存のアクセストークンを継続して使用し、ステータスコード200を返却します
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInfo"
+        required: true
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/logout:
+    delete:
+      tags:
+        - logout
+      summary: ログアウト
+      description: ログアウトを実行します
+      operationId: logout
+      responses:
+        "204":
+          description: Success
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/books/offices:
+    get:
+      tags:
+        - books
+      summary: 本一覧取得
+      description: オフィスが所有している本の一覧を取得します
+      operationId: getOfficeBooks
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+        - name: office-id
+          in: query
+          description: |
+            検索対象のオフィスIDを指定します  
+            指定されなかった場合は、全オフィスの本を取得します
+          required: false
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: q
+          in: query
+          description: 検索したいキーワード
+          required: false
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 50
+            example: "キーワード"
+        - name: can-borrow
+          in: query
+          description: |
+            貸出可能な本のみを取得するかを指定します  
+            デフォルトでは貸出可能な本のみを取得します
+          required: true
+          schema:
+            type: boolean
+            default: true
+        - name: is-available
+          in: query
+          description: |
+            現在利用可能な本のみを取得するかを指定します  
+            デフォルトでは利用可能な本のみを取得します
+          required: true
+          schema:
+            type: boolean
+            default: true
+        - name: sort
+          in: query
+          description: |
+            ソート順を指定します  
+            デフォルトでは最後にオフィスに登録された日の降順でソートされます
+          required: true
+          schema:
+            type: string
+            enum:
+              - "reg-date-desc"
+              - "reg-date-asc"
+              - "rating-desc"
+              - "rating-asc"
+              - "review-count-desc"
+              - "review-count-asc"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BookForList"
+  /api/v1/books/{bookId}:
+    get:
+      tags:
+        - books
+      summary: 本詳細取得
+      description: 指定したIDの本詳細を取得します
+      operationId: getBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetail"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/offices/{officeId}/books/{bookId}:
+    get:
+      tags:
+        - books
+      summary: 本一覧取得
+      description: 指定したIDのオフィスが所有している、指定したIDの本の一覧を取得します
+      operationId: getOfficeBooksByBook
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+        - name: officeId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OfficeBook"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/office/{officeId}/books/{bookId}/{officeBookId}/borrow:
+    post:
+      tags:
+        - books
+      summary: 本借り出し
+      description: 本を借ります
+      operationId: borrowBook
+      parameters:
+        - name: officeId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: officeBookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/number"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  officeId:
+                    $ref: "#/components/schemas/ulid"
+                  bookId:
+                    $ref: "#/components/schemas/ulid"
+                  officeBookId:
+                    $ref: "#/components/schemas/number"
+                  userId:
+                    $ref: "#/components/schemas/ulid"
+                  borrowDate:
+                    description: 借り出し日
+                    $ref: "#/components/schemas/dateTime"
+                required:
+                  - officeId
+                  - bookId
+                  - officeBookId
+                  - userId
+                  - borrowDate
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/office/{officeId}/books/{bookId}/{officeBookId}/return:
+    post:
+      tags:
+        - books
+      summary: 本返却
+      description: 借りている本を返却します
+      operationId: returnBook
+      parameters:
+        - name: officeId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: officeBookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/number"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/History"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/books/master:
+    get:
+      tags:
+        - books
+      summary: 本マスタ一覧取得
+      description: |
+        マスタに登録されている本の一覧を取得します  
+        管理者ユーザーのみ実行可能です
+      operationId: getMasterBooks
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+        - name: q
+          in: query
+          description: 検索したいキーワード
+          required: false
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 50
+            example: "キーワード"
+        - name: sort
+          in: query
+          description: |
+            ソート順を指定します  
+            デフォルトでは登録日の降順でソートされます
+          required: true
+          schema:
+            type: string
+            enum:
+              - "title-asc"
+              - "title-desc"
+              - "reg-date-asc"
+              - "reg-date-desc"
+            default: "reg-date-desc"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BookForList"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+    post:
+      tags:
+        - books
+      summary: 本マスタ新規登録
+      description: |
+        まだマスタに登録されていない本を新規に登録します  
+        管理者ユーザーのみ実行可能です
+      operationId: registerMasterBooks
+      parameters:
+        - name: force
+          in: query
+          description: |
+            重複チェックをせずに本をマスタに登録するかを指定します  
+            デフォルトではfalseです
+          schema:
+            type: boolean
+            default: false
+          required: true
+      requestBody:
+        $ref: "#/components/requestBodies/Books"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BookDetail"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/books/master/{bookId}:
+    put:
+      tags:
+        - books
+      summary: 本マスタ更新
+      description: |
+        指定したIDの本マスタを更新します  
+        管理者ユーザーのみ実行可能です
+      operationId: updateMasterBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: force
+          in: query
+          description: |
+            重複チェックをせずに更新するかを指定します  
+            デフォルトではfalseです
+          schema:
+            type: boolean
+            default: false
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Book"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetail"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/books/offices/{officeId}:
+    post:
+      tags:
+        - books
+      summary: 本追加
+      description: |
+        マスタに登録されている本をオフィスに追加します  
+        管理者ユーザーのみ実行可能です
+      operationId: registerOfficeBooks
+      parameters:
+        - name: officeId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      requestBody:
+        description: |
+          追加したい本マスタのIDの配列  
+          同じ本を複数追加したい場合は、追加したい回数IDを配列に含めてください
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/ulid"
+        required: true
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OfficeBook"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/offices/{officeId}/books/{bookId}/{officeBookId}:
+    put:
+      tags:
+        - books
+      summary: 本詳細更新
+      description: |
+        指定したIDの本詳細を更新します  
+        管理者ユーザーのみ実行可能です
+      operationId: updateOfficeBook
+      parameters:
+        - name: officeId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - name: officeBookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/number"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OfficeBookForUpdate"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfficeBook"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/books/borrowed/users/{userId}:
+    get:
+      tags:
+        - books
+      summary: 借りている本一覧取得
+      description: |
+        指定したIDのユーザーが借りている本一覧を取得します  
+        借り出し日の降順でソートされます
+      operationId: getBooksBorrowedByUser
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BorrowedBook"
+  /api/v1/users:
+    get:
+      tags:
+        - users
+      summary: ユーザー一覧取得
+      description: ユーザーの一覧を取得します
+      operationId: getUsers
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+        - name: q
+          in: query
+          description: 検索したいキーワード
+          required: false
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 50
+            example: "キーワード"
+        - name: sort
+          in: query
+          description: |
+            ソート順を指定します  
+            デフォルトではユーザー名の昇順でソートされます
+          required: true
+          schema:
+            type: string
+            enum:
+              - "user-name-asc"
+              - "user-name-desc"
+              - "reg-date-asc"
+              - "reg-date-desc"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      tags:
+        - users
+      summary: ユーザー新規登録
+      description: |
+        新規ユーザーを登録します  
+        管理者ユーザーのみ実行可能です
+      operationId: registerUsers
+      requestBody:
+        $ref: "#/components/requestBodies/UsersToUpsert"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/users/{userId}:
+    get:
+      tags:
+        - users
+      summary: ユーザー詳細取得
+      description: ユーザー詳細を取得します
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+    put:
+      tags:
+        - users
+      summary: ユーザー情報更新
+      description: |
+        指定したIDのユーザー情報を更新します  
+        管理者ユーザーか、本人のみ実行可能です  
+        管理者フラグの有効化は管理者ユーザーのみ実行可能です
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserToUpsert"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/reviews:
+    get:
+      tags:
+        - reviews
+      summary: レビュー一覧取得
+      description: |
+        レビュー一覧を取得します  
+        登録日の降順でソートされます
+      operationId: getReviews
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+  /api/v1/reviews/books/{bookId}:
+    get:
+      tags:
+        - reviews
+      summary: レビュー一覧取得
+      description: |
+        指定したIDの本に付いているレビュー一覧を取得します  
+        登録日の降順でソートされます
+      operationId: getReviewsByBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+    post:
+      tags:
+        - reviews
+      summary: レビュー投稿
+      description: 指定したIDの本にレビューを投稿します
+      operationId: registerReview
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      requestBody:
+        $ref: "#/components/requestBodies/ReviewToUpsert"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+    put:
+      tags:
+        - reviews
+      summary: レビュー更新
+      description: 指定したIDの本に投稿したレビューを更新します
+      operationId: updateReview
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      requestBody:
+        $ref: "#/components/requestBodies/ReviewToUpsert"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+    delete:
+      tags:
+        - reviews
+      summary: レビュー削除
+      description: 指定したIDの本に投稿したレビューを削除します
+      operationId: deleteReview
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      responses:
+        "204":
+          description: Success
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/histories/books/{bookId}:
+    get:
+      tags:
+        - histories
+      summary: 借り出し履歴一覧取得
+      description: |
+        指定したIDの本の借り出し履歴一覧を取得します  
+        返却日の降順でソートされます
+      operationId: getHistoriesByBook
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/History"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/histories/users/{userId}:
+    get:
+      tags:
+        - histories
+      summary: 借り出し履歴一覧取得
+      description: |
+        指定したIDのユーザーの借り出し履歴一覧を取得します  
+        返却日の降順でソートされます
+      operationId: getHistoriesByUser
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/History"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/images/{imageId}:
+    get:
+      tags:
+        - images
+      summary: 画像取得
+      description: 指定したIDの画像を取得します
+      operationId: getImage
+      parameters:
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/images:
+    post:
+      tags:
+        - images
+      summary: 画像アップロード
+      description: 画像をアップロードします
+      operationId: uploadImages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/data"
+              required:
+                - data
+        required: true
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/offices:
+    get:
+      tags:
+        - offices
+      summary: オフィス一覧取得
+      description: 登録済みのオフィス一覧を取得します
+      operationId: getOffices
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Office"
+    post:
+      tags:
+        - offices
+      summary: オフィス新規登録
+      description: |
+        オフィスを新規登録します  
+        管理者ユーザーのみ実行可能です
+      operationId: registerOffices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  officeName:
+                    type: string
+                    description: オフィス名
+                    maxLength: 50
+                    example: "東京本社"
+                required:
+                  - officeName
+        required: true
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Office"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+  /api/v1/offices/{officeId}:
+    get:
+      tags:
+        - offices
+      summary: オフィス詳細取得
+      description: 指定したIDのオフィス詳細を取得します
+      operationId: getOffice
+      parameters:
+        - name: officeId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ulid"
+      security: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Office"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+    put:
+      tags:
+        - offices
+      summary: オフィス更新
+      description: |
+        指定したIDのオフィス情報を更新します  
+        管理者ユーザーのみ実行可能です
+      operationId: updateOffices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                officeName:
+                  type: string
+                  description: オフィス名
+                  maxLength: 50
+                  example: "東京本社"
+              required:
+                - officeName
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Office"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HttpError"
+components:
+  parameters:
+    offset:
+      name: offset
+      in: query
+      description: 取得開始位置
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+        example: 0
+    limit:
+      name: limit
+      in: query
+      description: 取得件数
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+        example: 20
+    userId:
+      name: userId
+      in: path
+      description: ユーザーID
+      required: true
+      schema:
+        $ref: "#/components/schemas/ulid"
+  schemas:
+    ulid:
+      type: string
+      description: ULID
+      pattern: "^[0-9A-HJ-KM-NP-Za-hj-km-np-z]{26}$"
+      example: "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+    number:
+      type: integer
+      description: 枝番
+      minimum: 1
+      example: 1
+    isbn:
+      type: string
+      description: ISBN
+      pattern: \d{13}
+      example: "9784915512377"
+    title:
+      type: string
+      description: 本タイトル
+      maxLength: 100
+      example: "ハリー・ポッターと賢者の石"
+    author:
+      type: string
+      description: 著者
+      maxLength: 100
+      example: "Rowling J.K, 松岡 佑子"
+    publisher:
+      type: string
+      description: 出版社
+      maxLength: 100
+      example: "静山社"
+    publishDate:
+      type: string
+      format: date
+      description: 出版日
+      example: "1999-12-01"
+    dateTime:
+      type: string
+      format: date-time
+      description: 日時
+      example: "2017-07-21T17:32:28Z"
+    rating:
+      type: number
+      description: 評価
+      minimum: 0
+      maximum: 5
+      example: 4.5
+    review:
+      type: string
+      description: レビュー
+      maxLength: 500
+      example: "とても面白かったです"
+    data:
+      type: string
+      format: byte
+      description: バイナリデータ (Base64エンコード)
+      example: "U3dhZ2dlciByb2Nrcw=="
+    HttpError:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTPステータスコード
+          example: 500
+        message:
+          type: string
+          description: エラーメッセージ
+          example: "Internal Server Error"
+      required:
+        - code
+        - message
+    LoginInfo:
+      type: object
+      properties:
+        userId:
+          $ref: "#/components/schemas/ulid"
+        password:
+          type: string
+          description: パスワード (平文)
+          format: password
+          example: "password"
+      required:
+        - userId
+        - password
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: アクセストークン (JWT)
+          format: byte
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        token_type:
+          type: string
+          description: トークンタイプ
+          example: "bearer"
+        expires_in:
+          type: integer
+          description: トークンの有効期限 (秒)
+          example: 86400
+      required:
+        - access_token
+        - token_type
+        - expires_in
+    Book:
+      type: object
+      properties:
+        isbn:
+          $ref: "#/components/schemas/isbn"
+        title:
+          $ref: "#/components/schemas/title"
+        author:
+          $ref: "#/components/schemas/author"
+        publisher:
+          $ref: "#/components/schemas/publisher"
+        publishDate:
+          $ref: "#/components/schemas/publishDate"
+        coverId:
+          $ref: "#/components/schemas/ulid"
+      required:
+        - title
+        - author
+        - publisher
+        - publishDate
+        - coverId
+    BookForList:
+      type: object
+      properties:
+        bookId:
+          $ref: "#/components/schemas/ulid"
+        title:
+          $ref: "#/components/schemas/title"
+        coverId:
+          $ref: "#/components/schemas/ulid"
+        lastRegDate:
+          description: 最終登録日
+          $ref: "#/components/schemas/dateTime"
+        reviewCount:
+          type: integer
+          description: レビュー数
+          example: 5
+        rating:
+          $ref: "#/components/schemas/rating"
+      required:
+        - bookId
+        - title
+        - coverId
+        - lastRegDate
+        - reviewCount
+        - rating
+    BookDetail:
+      type: object
+      properties:
+        bookId:
+          $ref: "#/components/schemas/ulid"
+        isbn:
+          $ref: "#/components/schemas/isbn"
+        title:
+          $ref: "#/components/schemas/title"
+        author:
+          $ref: "#/components/schemas/author"
+        publisher:
+          $ref: "#/components/schemas/publisher"
+        publishDate:
+          $ref: "#/components/schemas/publishDate"
+        coverId:
+          $ref: "#/components/schemas/ulid"
+        reviewCount:
+          type: integer
+          description: レビュー数
+          example: 5
+        rating:
+          $ref: "#/components/schemas/rating"
+      required:
+        - bookId
+        - title
+        - author
+        - publisher
+        - publishDate
+        - coverId
+        - reviewCount
+        - rating
+    OfficeBook:
+      type: object
+      properties:
+        officeId:
+          $ref: "#/components/schemas/ulid"
+        bookId:
+          $ref: "#/components/schemas/ulid"
+        officeBookId:
+          $ref: "#/components/schemas/number"
+        regDate:
+          description: 登録日
+          $ref: "#/components/schemas/dateTime"
+        canBorrow:
+          type: boolean
+          description: 貸出可能かどうか
+          default: true
+        isAvailable:
+          type: boolean
+          description: 利用可能かどうか
+          default: true
+        metadata:
+          type: string
+          description: メタデータ
+          maxLength: 50
+      required:
+        - officeId
+        - bookId
+        - officeBookId
+        - regDate
+        - canBorrow
+        - isAvailable
+        - metadata
+    OfficeBookForUpdate:
+      type: object
+      properties:
+        officeId:
+          $ref: "#/components/schemas/ulid"
+        bookId:
+          $ref: "#/components/schemas/ulid"
+        officeBookId:
+          $ref: "#/components/schemas/number"
+        isAvailable:
+          type: boolean
+          description: 利用可能かどうか
+          default: true
+        metadata:
+          type: string
+          description: メタデータ
+          maxLength: 50
+      required:
+        - officeId
+        - bookId
+        - officeBookId
+        - isAvailable
+        - metadata
+    BorrowedBook:
+      type: object
+      properties:
+        bookId:
+          $ref: "#/components/schemas/ulid"
+        title:
+          $ref: "#/components/schemas/title"
+        coverId:
+          $ref: "#/components/schemas/ulid"
+        borrowDate:
+          description: 借り出し日
+          $ref: "#/components/schemas/dateTime"
+      required:
+        - bookId
+        - title
+        - coverId
+        - borrowDate
+    User:
+      type: object
+      properties:
+        userId:
+          $ref: "#/components/schemas/ulid"
+        userName:
+          type: string
+          description: ユーザー名
+          maxLength: 50
+          example: "ユーザー名"
+        officeId:
+          $ref: "#/components/schemas/ulid"
+        userIconId:
+          $ref: "#/components/schemas/ulid"
+        regDate:
+          description: 登録日
+          $ref: "#/components/schemas/dateTime"
+        isAdmin:
+          type: boolean
+          description: 管理者フラグ
+          default: false
+      required:
+        - userId
+        - userName
+        - officeId
+        - userIconId
+        - regDate
+        - isAdmin
+    UserToUpsert:
+      type: object
+      properties:
+        password:
+          type: string
+          description: パスワード (平文)
+          format: password
+          example: "password"
+        userName:
+          type: string
+          description: ユーザー名
+          maxLength: 50
+          example: "ユーザー名"
+        officeId:
+          $ref: "#/components/schemas/ulid"
+        userIconId:
+          $ref: "#/components/schemas/ulid"
+        isAdmin:
+          type: boolean
+          description: 管理者フラグ
+          default: false
+      required:
+        - password
+        - userName
+        - officeId
+        - userIconId
+        - isAdmin
+    Review:
+      type: object
+      properties:
+        bookId:
+          $ref: "#/components/schemas/ulid"
+        reviewId:
+          $ref: "#/components/schemas/number"
+        userId:
+          $ref: "#/components/schemas/ulid"
+        rating:
+          $ref: "#/components/schemas/rating"
+        review:
+          $ref: "#/components/schemas/review"
+        regDate:
+          description: 登録日
+          $ref: "#/components/schemas/dateTime"
+      required:
+        - bookId
+        - reviewId
+        - userId
+        - rating
+        - review
+        - regDate
+    History:
+      type: object
+      properties:
+        bookId:
+          $ref: "#/components/schemas/ulid"
+        historyId:
+          $ref: "#/components/schemas/number"
+        userId:
+          $ref: "#/components/schemas/ulid"
+        borrowDate:
+          description: 借り出し日
+          $ref: "#/components/schemas/dateTime"
+        returnDate:
+          description: 返却日
+          $ref: "#/components/schemas/dateTime"
+      required:
+        - bookId
+        - historyId
+        - userId
+        - borrowDate
+        - returnDate
+    Image:
+      type: object
+      properties:
+        imageId:
+          $ref: "#/components/schemas/ulid"
+        imageName:
+          type: string
+          description: 画像名
+          maxLength: 120
+          example: "example.png"
+        path:
+          type: string
+          description: パス
+          maxLength: 1024
+          example: "/path/to/example.png"
+      required:
+        - imageId
+        - imageName
+        - path
+    Office:
+      type: object
+      properties:
+        officeId:
+          $ref: "#/components/schemas/ulid"
+        officeName:
+          type: string
+          description: オフィス名
+          maxLength: 50
+          example: "東京本社"
+      required:
+        - officeId
+        - officeName
+  requestBodies:
+    Books:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Book"
+    UsersToUpsert:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/UserToUpsert"
+    ReviewToUpsert:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              rating:
+                $ref: "#/components/schemas/rating"
+              review:
+                $ref: "#/components/schemas/review"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
