@@ -17,6 +17,10 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/html:/var/www/html
     command: ["--version"]
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
   backend:
     container_name: backend
     build:
