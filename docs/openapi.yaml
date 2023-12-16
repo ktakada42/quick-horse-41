@@ -170,11 +170,7 @@ paths:
       description: 指定したIDの本詳細を取得します
       operationId: getBook
       parameters:
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/bookId"
       security: []
       responses:
         "200":
@@ -199,16 +195,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
-        - name: officeId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/officeId"
+        - $ref: "#/components/parameters/bookId"
       security: []
       responses:
         "200":
@@ -233,16 +221,8 @@ paths:
       description: 本を借ります
       operationId: borrowBook
       parameters:
-        - name: officeId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/officeId"
+        - $ref: "#/components/parameters/bookId"
         - name: officeBookId
           in: path
           required: true
@@ -293,16 +273,8 @@ paths:
       description: 借りている本を返却します
       operationId: returnBook
       parameters:
-        - name: officeId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/officeId"
+        - $ref: "#/components/parameters/bookId"
         - name: officeBookId
           in: path
           required: true
@@ -446,11 +418,7 @@ paths:
         管理者ユーザーのみ実行可能です
       operationId: updateMasterBook
       parameters:
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/bookId"
         - name: force
           in: query
           description: |
@@ -507,11 +475,7 @@ paths:
         管理者ユーザーのみ実行可能です
       operationId: registerOfficeBooks
       parameters:
-        - name: officeId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/officeId"
       requestBody:
         description: |
           追加したい本マスタのIDの配列  
@@ -566,16 +530,8 @@ paths:
         管理者ユーザーのみ実行可能です
       operationId: updateOfficeBook
       parameters:
-        - name: officeId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/officeId"
+        - $ref: "#/components/parameters/bookId"
         - name: officeBookId
           in: path
           required: true
@@ -831,13 +787,9 @@ paths:
         登録日の降順でソートされます
       operationId: getReviewsByBook
       parameters:
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/bookId"
       security: []
       responses:
         "200":
@@ -855,11 +807,7 @@ paths:
       description: 指定したIDの本にレビューを投稿します
       operationId: registerReview
       parameters:
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/bookId"
       requestBody:
         $ref: "#/components/requestBodies/ReviewToUpsert"
       responses:
@@ -900,11 +848,7 @@ paths:
       description: 指定したIDの本に投稿したレビューを更新します
       operationId: updateReview
       parameters:
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/bookId"
       requestBody:
         $ref: "#/components/requestBodies/ReviewToUpsert"
       responses:
@@ -939,11 +883,7 @@ paths:
       description: 指定したIDの本に投稿したレビューを削除します
       operationId: deleteReview
       parameters:
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/bookId"
       responses:
         "204":
           description: Success
@@ -971,11 +911,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
-        - name: bookId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/bookId"
       security: []
       responses:
         "200":
@@ -1163,11 +1099,7 @@ paths:
       description: 指定したIDのオフィス詳細を取得します
       operationId: getOffice
       parameters:
-        - name: officeId
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/ulid"
+        - $ref: "#/components/parameters/officeId"
       security: []
       responses:
         "200":
@@ -1256,6 +1188,20 @@ components:
       name: userId
       in: path
       description: ユーザーID
+      required: true
+      schema:
+        $ref: "#/components/schemas/ulid"
+    officeId:
+      name: officeId
+      in: path
+      description: オフィスID
+      required: true
+      schema:
+        $ref: "#/components/schemas/ulid"
+    bookId:
+      name: bookId
+      in: path
+      description: 本ID
       required: true
       schema:
         $ref: "#/components/schemas/ulid"
