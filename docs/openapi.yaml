@@ -245,7 +245,6 @@ paths:
                   userId:
                     $ref: "#/components/schemas/ulid"
                   borrowDate:
-                    description: 借り出し日
                     $ref: "#/components/schemas/dateTime"
                 required:
                   - officeId
@@ -1340,7 +1339,6 @@ components:
         coverId:
           $ref: "#/components/schemas/ulid"
         lastRegDate:
-          description: 最終登録日
           $ref: "#/components/schemas/dateTime"
         reviewCount:
           type: integer
@@ -1397,7 +1395,6 @@ components:
         officeBookId:
           $ref: "#/components/schemas/number"
         regDate:
-          description: 登録日
           $ref: "#/components/schemas/dateTime"
         canBorrow:
           type: boolean
@@ -1452,7 +1449,6 @@ components:
         coverId:
           $ref: "#/components/schemas/ulid"
         borrowDate:
-          description: 借り出し日
           $ref: "#/components/schemas/dateTime"
       required:
         - bookId
@@ -1474,7 +1470,6 @@ components:
         userIconId:
           $ref: "#/components/schemas/ulid"
         regDate:
-          description: 登録日
           $ref: "#/components/schemas/dateTime"
         isAdmin:
           type: boolean
@@ -1528,7 +1523,6 @@ components:
         review:
           $ref: "#/components/schemas/review"
         regDate:
-          description: 登録日
           $ref: "#/components/schemas/dateTime"
       required:
         - bookId
@@ -1547,10 +1541,8 @@ components:
         userId:
           $ref: "#/components/schemas/ulid"
         borrowDate:
-          description: 借り出し日
           $ref: "#/components/schemas/dateTime"
         returnDate:
-          description: 返却日
           $ref: "#/components/schemas/dateTime"
       required:
         - bookId
