@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `image` (
 
 CREATE TABLE IF NOT EXISTS `user` (
     `user_id` VARCHAR(26) NOT NULL UNIQUE,
+    `email` VARCHAR(254) NOT NULL UNIQUE,
     `password` VARCHAR(60) NOT NULL,
     `user_name` VARCHAR(50) NOT NULL,
     `office_id` VARCHAR(26) NOT NULL,

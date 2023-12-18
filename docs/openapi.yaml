@@ -50,7 +50,7 @@ paths:
             schema:
               $ref: "#/components/schemas/LoginInfo"
         required: true
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -152,7 +152,7 @@ paths:
               - "rating-asc"
               - "review-count-desc"
               - "review-count-asc"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -171,7 +171,7 @@ paths:
       operationId: getBook
       parameters:
         - $ref: "#/components/parameters/bookId"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -197,7 +197,7 @@ paths:
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/officeId"
         - $ref: "#/components/parameters/bookId"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -586,7 +586,7 @@ paths:
         - $ref: "#/components/parameters/userId"
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -628,7 +628,7 @@ paths:
               - "user-name-desc"
               - "reg-date-asc"
               - "reg-date-desc"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -688,7 +688,7 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/ulid"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -766,7 +766,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -789,7 +789,7 @@ paths:
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/bookId"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -911,7 +911,7 @@ paths:
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/bookId"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -939,7 +939,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -968,7 +968,7 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/ulid"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -1029,7 +1029,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/offset"
         - $ref: "#/components/parameters/limit"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -1099,7 +1099,7 @@ paths:
       operationId: getOffice
       parameters:
         - $ref: "#/components/parameters/officeId"
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Success
@@ -1278,8 +1278,10 @@ components:
     LoginInfo:
       type: object
       properties:
-        userId:
-          $ref: "#/components/schemas/ulid"
+        email:
+          type: string
+          description: メールアドレス
+          example: "mail@example.com"
         password:
           type: string
           description: パスワード (平文)
@@ -1616,4 +1618,4 @@ components:
       scheme: bearer
       bearerFormat: JWT
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
