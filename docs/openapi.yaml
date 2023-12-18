@@ -1293,23 +1293,18 @@ components:
     Token:
       type: object
       properties:
-        access_token:
+        accessToken:
           type: string
           description: アクセストークン (JWT)
           format: byte
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        token_type:
-          type: string
-          description: トークンタイプ
-          example: "bearer"
-        expires_in:
+        expiresIn:
           type: integer
           description: トークンの有効期限 (秒)
           example: 86400
       required:
-        - access_token
-        - token_type
-        - expires_in
+        - accessToken
+        - expiresIn
     Book:
       type: object
       properties:
