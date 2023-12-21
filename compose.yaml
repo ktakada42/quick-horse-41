@@ -25,6 +25,7 @@ services:
     container_name: backend
     build:
       context: ./backend
+      target: runner
     ports:
       - 8000:8000
   mysql:
