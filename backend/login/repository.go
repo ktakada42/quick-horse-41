@@ -5,6 +5,8 @@ import (
 	"errors"
 )
 
+//go:generate mockgen -source=$GOFILE -destination=../mock/mock_$GOPACKAGE/mock_$GOFILE
+
 type repositoryInterface interface {
 	GetToken(userId string) (string, error)
 	SaveToken(userId, token string) error
