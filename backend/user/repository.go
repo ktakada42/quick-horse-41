@@ -5,6 +5,8 @@ import (
 	"errors"
 )
 
+//go:generate mockgen -source=$GOFILE -destination=../mock/mock_$GOPACKAGE/mock_$GOFILE
+
 type RepositoryInterface interface {
 	GetHashedPassword(userId string) (string, error)
 	GetUserIdByEmail(email string) (string, error)
