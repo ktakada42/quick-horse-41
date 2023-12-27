@@ -16,7 +16,7 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/html:/var/www/html
-    command: ["--version"]
+    command: [ "--version" ]
   frontend:
     container_name: frontend
     build:
@@ -28,6 +28,9 @@ services:
       target: runner
     ports:
       - 8000:8000
+    depends_on:
+      mysql:
+        condition: service_healthy
   mysql:
     container_name: mysql
     image: mysql:8.0
@@ -42,6 +45,8 @@ services:
       - ./mysql/mysql_init:/docker-entrypoint-initdb.d
       - ./mysql/my.cnf:/etc/my.cnf
       - ./volume/mysql:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
   redoc:
     container_name: redoc
     image: redocly/redoc:v2.1.3
