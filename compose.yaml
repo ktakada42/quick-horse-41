@@ -10,6 +10,9 @@ services:
     ports:
       - 80:80
       - 443:443
+    depends_on:
+      - backend
+      - frontend
   certbot:
     container_name: certbot
     image: certbot/certbot:v2.7.4
