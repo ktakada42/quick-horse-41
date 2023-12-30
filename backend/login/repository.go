@@ -6,9 +6,9 @@ import (
 )
 
 type repositoryInterface interface {
-	getToken(userId string) (string, error)
-	saveToken(userId, token string) error
-	updateToken(userId, token string) error
+	GetToken(userId string) (string, error)
+	SaveToken(userId, token string) error
+	UpdateToken(userId, token string) error
 }
 
 type repositoryStruct struct {
@@ -19,7 +19,7 @@ func NewLoginRepository(db *sql.DB) repositoryInterface {
 	return &repositoryStruct{db: db}
 }
 
-func (r *repositoryStruct) getToken(userId string) (string, error) {
+func (r *repositoryStruct) GetToken(userId string) (string, error) {
 	row := r.db.QueryRow("SELECT token FROM session WHERE user_id = ?", userId)
 
 	var token string
@@ -33,7 +33,7 @@ func (r *repositoryStruct) getToken(userId string) (string, error) {
 	return token, nil
 }
 
-func (r *repositoryStruct) saveToken(userId, token string) error {
+func (r *repositoryStruct) SaveToken(userId, token string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ func (r *repositoryStruct) saveToken(userId, token string) error {
 	return nil
 }
 
-func (r *repositoryStruct) updateToken(userId, token string) error {
+func (r *repositoryStruct) UpdateToken(userId, token string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err

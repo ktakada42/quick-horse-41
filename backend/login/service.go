@@ -44,7 +44,7 @@ func (s *serviceStruct) createToken(userId string) (token string, expiresIn stri
 		return "", "", err
 	}
 
-	if err := s.lr.saveToken(userId, token); err != nil {
+	if err := s.lr.SaveToken(userId, token); err != nil {
 		return "", "", err
 	}
 
@@ -57,7 +57,7 @@ func (s *serviceStruct) updateToken(userId string) (token string, expiresIn stri
 		return "", "", err
 	}
 
-	if err := s.lr.updateToken(userId, token); err != nil {
+	if err := s.lr.UpdateToken(userId, token); err != nil {
 		return "", "", err
 	}
 

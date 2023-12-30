@@ -58,9 +58,9 @@ func TestGetToken(t *testing.T) {
 
 			r := NewLoginRepository(db)
 
-			got, err := r.getToken(userId)
+			got, err := r.GetToken(userId)
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("getToken() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatalf("GetToken() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			assert.Equal(t, tt.want, got)
 		})
@@ -122,8 +122,8 @@ func TestSaveToken(t *testing.T) {
 
 			r := NewLoginRepository(db)
 
-			if err := r.saveToken(userId, token); (err != nil) != tt.wantErr {
-				t.Fatalf("saveToken() error = %v, wantErr %v", err, tt.wantErr)
+			if err := r.SaveToken(userId, token); (err != nil) != tt.wantErr {
+				t.Fatalf("SaveToken() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -184,8 +184,8 @@ func TestUpdateToken(t *testing.T) {
 
 			r := NewLoginRepository(db)
 
-			if err := r.updateToken(userId, token); (err != nil) != tt.wantErr {
-				t.Fatalf("updateToken() error = %v, wantErr %v", err, tt.wantErr)
+			if err := r.UpdateToken(userId, token); (err != nil) != tt.wantErr {
+				t.Fatalf("UpdateToken() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

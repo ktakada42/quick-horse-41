@@ -41,7 +41,7 @@ func (u *useCaseStruct) login(email, password string) (token string, expiresIn s
 		return "", "", utils.NewHttpError(http.StatusUnauthorized, errors.New(utils.LoginErrorMessage))
 	}
 
-	token, err = u.lr.getToken(userId)
+	token, err = u.lr.GetToken(userId)
 	if err != nil {
 		return "", "", err
 	}
