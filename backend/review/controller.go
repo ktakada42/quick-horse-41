@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+const (
+	defaultLimit = 20
+)
+
 type ControllerInterface interface {
 	GetReviews(w http.ResponseWriter, r *http.Request)
 }
@@ -52,14 +56,19 @@ func (c *controllerStruct) GetReviews(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	offset, limit := &body.Offset, &body.Limit
+	offset, limit := body.Offset, body.Limit
+
+	// limitに指定がない場合、デフォルト値を設定
+	if limit == 0 {
+		limit = defaultLimit
+	}
 
 	// リクエストボディのバリデーション
 	var errMessages []string
-	if *offset < 0 {
+	if offset < 0 {
 		errMessages = append(errMessages, "offset must be non-negative")
 	}
-	if *limit < 1 || *limit > 100 {
+	if limit < 1 || limit > 100 {
 		errMessages = append(errMessages, "limit must be between 1 and 100")
 	}
 	if len(errMessages) > 0 {
@@ -68,7 +77,7 @@ func (c *controllerStruct) GetReviews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// usecaseの呼び出し
-	reviews, err := c.ruc.GetReviews(*offset, *limit)
+	reviews, err := c.ruc.GetReviews(offset, limit)
 	if err != nil {
 		utils.SetJsonError(w, err, http.StatusInternalServerError)
 		return
