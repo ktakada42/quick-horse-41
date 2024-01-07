@@ -26,6 +26,8 @@ FROM golang:1.21-bookworm AS develop
 
 WORKDIR /app
 
+RUN go install github.com/golang/mock/mockgen@v1.6.0
+
 RUN go install github.com/cosmtrek/air@v1.49.0
 
 CMD ["air"]
