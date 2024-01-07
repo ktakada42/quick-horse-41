@@ -16,12 +16,17 @@ func NewReviewRepository(db *sql.DB) repositoryInterface {
 	return &repositoryStruct{db: db}
 }
 
+// 全てのレビューを取得する
 func (r *repositoryStruct) GetReviews(offset int, limit int) ([]Review, error) {
 	rows, err := r.db.Query("SELECT * from review LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, err
 	}
+	return convertToReviews(rows)
+}
 
+// rows型をReview型に紐づける
+func convertToReviews(rows *sql.Rows) ([]Review, error) {
 	reviews := []Review{}
 	for rows.Next() {
 		var review Review
