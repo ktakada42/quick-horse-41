@@ -20,7 +20,7 @@ var (
 )
 
 func NewDB() (*sql.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", DBUser, DBPassword, DBHost, DBPort, DBName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", DBUser, DBPassword, DBHost, DBPort, DBName)
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
