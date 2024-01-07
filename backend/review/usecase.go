@@ -1,7 +1,12 @@
 package review
 
+import (
+	"errors"
+	"log"
+)
+
 type useCaseInterface interface {
-	reviews(offset int, limit int) ([]Review, error)
+	GetReviews(offset int, limit int) ([]Review, error)
 }
 
 type useCaseStruct struct {
@@ -12,10 +17,13 @@ func NewReviewUseCase(rr repositoryInterface) useCaseInterface {
 	return &useCaseStruct{rr: rr}
 }
 
-func (u *useCaseStruct) reviews(offset int, limit int) ([]Review, error) {
-	reviews, err := u.rr.GetReviews(offset, limit)
+// 全てのレビューを取得する
+func (uc *useCaseStruct) GetReviews(offset int, limit int) ([]Review, error) {
+	reviews, err := uc.rr.GetReviews(offset, limit)
 	if err != nil {
-		return nil, err
+		// エラーの詳細はログに出力する
+		log.Printf("review usecase GetReviews() error: %v", err)
+		return nil, errors.New("internal server error")
 	}
 	return reviews, nil
 }
