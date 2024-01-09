@@ -34,7 +34,7 @@ type Response struct {
 }
 
 // nil以外を返すときはBad Requestを返すので、HttpErrorにはラップしない
-func (c *loginController) validateRequest(r *http.Request) error {
+func validateRequest(r *http.Request) error {
 	if r.Method != http.MethodPost {
 		return fmt.Errorf("method: %s is invalid", r.Method)
 	}
@@ -47,7 +47,7 @@ func (c *loginController) validateRequest(r *http.Request) error {
 }
 
 func (c *loginController) Login(w http.ResponseWriter, r *http.Request) {
-	if err := c.validateRequest(r); err != nil {
+	if err := validateRequest(r); err != nil {
 		utils.SetJsonError(w, err, http.StatusBadRequest)
 		return
 	}
