@@ -1,23 +1,24 @@
-package review
+package repository
 
 import (
+	"app/review/entity"
 	"database/sql"
 )
 
-type repositoryInterface interface {
-	GetReviews(offset int, limit int) ([]Review, error)
+type RepositoryInterface interface {
+	GetReviews(offset int, limit int) ([]entity.Review, error)
 }
 
 type repositoryStruct struct {
 	db *sql.DB
 }
 
-func NewReviewRepository(db *sql.DB) repositoryInterface {
+func NewReviewRepository(db *sql.DB) RepositoryInterface {
 	return &repositoryStruct{db: db}
 }
 
 // 全てのレビューを取得する
-func (r *repositoryStruct) GetReviews(offset int, limit int) ([]Review, error) {
+func (r *repositoryStruct) GetReviews(offset int, limit int) ([]entity.Review, error) {
 	rows, err := r.db.Query("SELECT * from review LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, err
@@ -26,10 +27,10 @@ func (r *repositoryStruct) GetReviews(offset int, limit int) ([]Review, error) {
 }
 
 // rows型をReview型に紐づける
-func convertToReviews(rows *sql.Rows) ([]Review, error) {
-	reviews := []Review{}
+func convertToReviews(rows *sql.Rows) ([]entity.Review, error) {
+	reviews := []entity.Review{}
 	for rows.Next() {
-		var review Review
+		var review entity.Review
 		if err := rows.Scan(&review.BookID, &review.ReviewID, &review.UserID, &review.Rating, &review.Review, &review.RegDate); err != nil {
 			return nil, err
 		}

@@ -1,6 +1,7 @@
-package review
+package controller
 
 import (
+	"app/review/usecase"
 	"app/utils"
 	"encoding/json"
 	"fmt"
@@ -19,10 +20,10 @@ type ControllerInterface interface {
 }
 
 type controllerStruct struct {
-	ruc useCaseInterface
+	ruc usecase.UseCaseInterface
 }
 
-func NewReviewController(ruc useCaseInterface) ControllerInterface {
+func NewReviewController(ruc usecase.UseCaseInterface) ControllerInterface {
 	return &controllerStruct{ruc: ruc}
 }
 

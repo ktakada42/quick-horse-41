@@ -1,6 +1,7 @@
-package review
+package repository
 
 import (
+	"app/review/entity"
 	"fmt"
 	"reflect"
 	"testing"
@@ -9,10 +10,24 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
-func setTestData() ([]Review, *sqlmock.Rows) {
-	reviews := []Review{
-		{"book1", 1, "user1", 5, "素晴らしい本でした。", timeParser("2023-01-01 00:00:00")},
-		{"book2", 2, "user2", 4, "面白かったです。", timeParser("2023-01-02 00:00:00")},
+func setTestData() ([]entity.Review, *sqlmock.Rows) {
+	reviews := []entity.Review{
+		{
+			BookID:   "book1",
+			ReviewID: 1,
+			UserID:   "user1",
+			Rating:   5,
+			Review:   "素晴らしい本でした。",
+			RegDate:  timeParser("2023-01-01 00:00:00"),
+		},
+		{
+			BookID:   "book2",
+			ReviewID: 2,
+			UserID:   "user2",
+			Rating:   4,
+			Review:   "面白かったです。",
+			RegDate:  timeParser("2023-01-02 00:00:00"),
+		},
 	}
 
 	rows := sqlmock.NewRows([]string{"book_id", "review_id", "user_id", "rating", "review", "reg_date"}).
@@ -38,7 +53,7 @@ func TestRepositoryGetReviews(t *testing.T) {
 		offset      int
 		limit       int
 		mockClosure func(mock sqlmock.Sqlmock)
-		want        []Review
+		want        []entity.Review
 		wantErr     bool
 	}{
 		"正常系: offset = 0, limit = 10": {

@@ -1,24 +1,26 @@
-package review
+package usecase
 
 import (
+	"app/review/entity"
+	"app/review/repository"
 	"errors"
 	"log"
 )
 
-type useCaseInterface interface {
-	GetReviews(offset int, limit int) ([]Review, error)
+type UseCaseInterface interface {
+	GetReviews(offset int, limit int) ([]entity.Review, error)
 }
 
 type useCaseStruct struct {
-	rr repositoryInterface
+	rr repository.RepositoryInterface
 }
 
-func NewReviewUseCase(rr repositoryInterface) useCaseInterface {
+func NewReviewUseCase(rr repository.RepositoryInterface) UseCaseInterface {
 	return &useCaseStruct{rr: rr}
 }
 
 // 全てのレビューを取得する
-func (uc *useCaseStruct) GetReviews(offset int, limit int) ([]Review, error) {
+func (uc *useCaseStruct) GetReviews(offset int, limit int) ([]entity.Review, error) {
 	reviews, err := uc.rr.GetReviews(offset, limit)
 	if err != nil {
 		// エラーの詳細はログに出力する

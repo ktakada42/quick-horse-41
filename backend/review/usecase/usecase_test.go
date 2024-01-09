@@ -1,7 +1,8 @@
-package review
+package usecase
 
 import (
 	"app/mock/mock_review"
+	"app/review/entity"
 	"reflect"
 	"testing"
 	"time"
@@ -10,12 +11,12 @@ import (
 )
 
 type mocks struct {
-	reviewRepo *mock_review.MockrepositoryInterface
+	reviewRepo *mock_review.MockRepositoryInterface
 }
 
-func newWithMocks(t *testing.T) (useCaseInterface, *mocks) {
+func newWithMocks(t *testing.T) (UseCaseInterface, *mocks) {
 	ctrl := gomock.NewController(t)
-	mockReviewRepo := mock_review.NewMockrepositoryInterface(ctrl)
+	mockReviewRepo := mock_review.NewMockRepositoryInterface(ctrl)
 	ruc := NewReviewUseCase(mockReviewRepo)
 	return ruc, &mocks{
 		reviewRepo: mockReviewRepo,
@@ -28,7 +29,7 @@ func TestUseCaseGetReviews(t *testing.T) {
 	tests := map[string]struct {
 		offset  int
 		limit   int
-		want    []Review
+		want    []entity.Review
 		wantErr bool
 	}{}
 
