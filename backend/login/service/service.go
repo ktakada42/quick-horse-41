@@ -1,4 +1,4 @@
-package login
+package service
 
 import (
 	"os"
@@ -7,25 +7,26 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"app/user"
+	lr "app/login/repository"
+	ur "app/user/repository"
 )
 
-type serviceInterface interface {
-	isPasswordCorrect(userId, password string) (bool, error)
-	createToken(userId string) (token string, expiresIn string, err error)
-	updateToken(userId string) (token string, expiresIn string, err error)
+type LoginService interface {
+	IsPasswordCorrect(userId, password string) (bool, error)
+	CreateToken(userId string) (token string, expiresIn string, err error)
+	UpdateToken(userId string) (token string, expiresIn string, err error)
 }
 
-type serviceStruct struct {
-	lr repositoryInterface
-	ur user.RepositoryInterface
+type loginService struct {
+	lr lr.LoginRepository
+	ur ur.UserRepository
 }
 
-func NewLoginService(lr repositoryInterface, ur user.RepositoryInterface) serviceInterface {
-	return &serviceStruct{lr: lr, ur: ur}
+func NewLoginService(lr lr.LoginRepository, ur ur.UserRepository) LoginService {
+	return &loginService{lr: lr, ur: ur}
 }
 
-func (s *serviceStruct) isPasswordCorrect(userId, password string) (bool, error) {
+func (s *loginService) IsPasswordCorrect(userId, password string) (bool, error) {
 	hashedPassword, err := s.ur.GetHashedPassword(userId)
 	if err != nil {
 		return false, err
@@ -38,7 +39,7 @@ func (s *serviceStruct) isPasswordCorrect(userId, password string) (bool, error)
 	return true, nil
 }
 
-func (s *serviceStruct) createToken(userId string) (token string, expiresIn string, err error) {
+func (s *loginService) CreateToken(userId string) (token string, expiresIn string, err error) {
 	token, expiresIn, err = createJWT(userId)
 	if err != nil {
 		return "", "", err
@@ -51,7 +52,7 @@ func (s *serviceStruct) createToken(userId string) (token string, expiresIn stri
 	return token, expiresIn, nil
 }
 
-func (s *serviceStruct) updateToken(userId string) (token string, expiresIn string, err error) {
+func (s *loginService) UpdateToken(userId string) (token string, expiresIn string, err error) {
 	token, expiresIn, err = createJWT(userId)
 	if err != nil {
 		return "", "", err

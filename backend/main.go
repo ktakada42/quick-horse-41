@@ -6,8 +6,11 @@ import (
 	"net/http"
 
 	"app/configs"
-	"app/login"
-	"app/user"
+	"app/login/controller"
+	"app/login/repository"
+	"app/login/service"
+	"app/login/usecase"
+	ur "app/user/repository"
 )
 
 func main() {
@@ -16,11 +19,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	loginRepository := login.NewLoginRepository(db)
-	userRepository := user.NewUserRepository(db)
-	loginService := login.NewLoginService(loginRepository, userRepository)
-	loginUseCase := login.NewLoginUseCase(loginService, loginRepository, userRepository)
-	loginController := login.NewLoginController(loginUseCase)
+	loginRepository := repository.NewLoginRepository(db)
+	userRepository := ur.NewUserRepository(db)
+	loginService := service.NewLoginService(loginRepository, userRepository)
+	loginUseCase := usecase.NewLoginUseCase(loginService, loginRepository, userRepository)
+	loginController := controller.NewLoginController(loginUseCase)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello World")

@@ -1,4 +1,4 @@
-package login
+package controller
 
 import (
 	"encoding/json"
@@ -7,19 +7,20 @@ import (
 	"net/http"
 	"strings"
 
+	"app/login/usecase"
 	"app/utils"
 )
 
-type controllerInterface interface {
+type LoginController interface {
 	Login(w http.ResponseWriter, r *http.Request)
 }
 
-type controllerStruct struct {
-	lu useCaseInterface
+type loginController struct {
+	lu usecase.LoginUseCase
 }
 
-func NewLoginController(lu useCaseInterface) controllerInterface {
-	return &controllerStruct{lu: lu}
+func NewLoginController(lu usecase.LoginUseCase) LoginController {
+	return &loginController{lu: lu}
 }
 
 type Request struct {
@@ -33,7 +34,7 @@ type Response struct {
 }
 
 // nil以外を返すときはBad Requestを返すので、HttpErrorにはラップしない
-func (c *controllerStruct) validateRequest(r *http.Request) error {
+func (c *loginController) validateRequest(r *http.Request) error {
 	if r.Method != http.MethodPost {
 		return fmt.Errorf("method: %s is invalid", r.Method)
 	}
@@ -45,7 +46,7 @@ func (c *controllerStruct) validateRequest(r *http.Request) error {
 	return nil
 }
 
-func (c *controllerStruct) Login(w http.ResponseWriter, r *http.Request) {
+func (c *loginController) Login(w http.ResponseWriter, r *http.Request) {
 	if err := c.validateRequest(r); err != nil {
 		utils.SetJsonError(w, err, http.StatusBadRequest)
 		return
@@ -58,7 +59,7 @@ func (c *controllerStruct) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	email, password := body.Email, body.Password
 
-	token, expiresIn, err := c.lu.login(email, password)
+	token, expiresIn, err := c.lu.Login(email, password)
 	if err != nil {
 		var httpError *utils.HttpError
 		if errors.As(err, &httpError) {

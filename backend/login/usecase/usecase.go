@@ -1,28 +1,30 @@
-package login
+package usecase
 
 import (
 	"errors"
 	"net/http"
 
-	"app/user"
+	lr "app/login/repository"
+	"app/login/service"
+	ur "app/user/repository"
 	"app/utils"
 )
 
-type useCaseInterface interface {
-	login(email, password string) (token string, expiresIn string, err error)
+type LoginUseCase interface {
+	Login(email, password string) (token string, expiresIn string, err error)
 }
 
-type useCaseStruct struct {
-	ls serviceInterface
-	lr repositoryInterface
-	ur user.RepositoryInterface
+type loginUseCase struct {
+	ls service.LoginService
+	lr lr.LoginRepository
+	ur ur.UserRepository
 }
 
-func NewLoginUseCase(ls serviceInterface, lr repositoryInterface, ur user.RepositoryInterface) useCaseInterface {
-	return &useCaseStruct{ls: ls, lr: lr, ur: ur}
+func NewLoginUseCase(ls service.LoginService, lr lr.LoginRepository, ur ur.UserRepository) LoginUseCase {
+	return &loginUseCase{ls: ls, lr: lr, ur: ur}
 }
 
-func (u *useCaseStruct) login(email, password string) (token string, expiresIn string, err error) {
+func (u *loginUseCase) Login(email, password string) (token string, expiresIn string, err error) {
 	userId, err := u.ur.GetUserIdByEmail(email)
 	if err != nil {
 		return "", "", err
@@ -32,7 +34,7 @@ func (u *useCaseStruct) login(email, password string) (token string, expiresIn s
 		return "", "", utils.NewHttpError(http.StatusUnauthorized, errors.New(utils.LoginErrorMessage))
 	}
 
-	isCorrect, err := u.ls.isPasswordCorrect(userId, password)
+	isCorrect, err := u.ls.IsPasswordCorrect(userId, password)
 	if err != nil {
 		return "", "", err
 	}
@@ -46,8 +48,8 @@ func (u *useCaseStruct) login(email, password string) (token string, expiresIn s
 		return "", "", err
 	}
 	if token == "" {
-		return u.ls.createToken(userId)
+		return u.ls.CreateToken(userId)
 	}
 
-	return u.ls.updateToken(userId)
+	return u.ls.UpdateToken(userId)
 }

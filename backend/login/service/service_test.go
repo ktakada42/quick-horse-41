@@ -1,4 +1,4 @@
-package login
+package service
 
 import (
 	"fmt"
@@ -8,22 +8,22 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
 
-	"app/mock/mock_login"
-	"app/mock/mock_user"
+	"app/login/mock/mock_repository"
+	mock_user_repository "app/user/mock/mock_repository"
 )
 
 type loginServiceTest struct {
-	lr *mock_login.MockrepositoryInterface
-	ur *mock_user.MockRepositoryInterface
-	ls serviceInterface
+	lr *mock_repository.MockLoginRepository
+	ur *mock_user_repository.MockUserRepository
+	ls LoginService
 }
 
 func newLoginServiceTest(t *testing.T) *loginServiceTest {
 	t.Helper()
 
 	ctrl := gomock.NewController(t)
-	lr := mock_login.NewMockrepositoryInterface(ctrl)
-	ur := mock_user.NewMockRepositoryInterface(ctrl)
+	lr := mock_repository.NewMockLoginRepository(ctrl)
+	ur := mock_user_repository.NewMockUserRepository(ctrl)
 
 	return &loginServiceTest{lr: lr, ur: ur, ls: NewLoginService(lr, ur)}
 }
@@ -77,9 +77,9 @@ func TestIsPasswordCorrect(t *testing.T) {
 			lst := newLoginServiceTest(t)
 			tt.expects(lst)
 
-			got, err := lst.ls.isPasswordCorrect(email, password)
+			got, err := lst.ls.IsPasswordCorrect(email, password)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("isPasswordCorrect() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("IsPasswordCorrect() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			assert.Equal(t, tt.want, got)
 		})

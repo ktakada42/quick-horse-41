@@ -1,4 +1,4 @@
-package login
+package repository
 
 import (
 	"database/sql"
@@ -7,21 +7,21 @@ import (
 
 //go:generate mockgen -source=$GOFILE -destination=../mock/mock_$GOPACKAGE/mock_$GOFILE
 
-type repositoryInterface interface {
+type LoginRepository interface {
 	GetToken(userId string) (string, error)
 	SaveToken(userId, token string) error
 	UpdateToken(userId, token string) error
 }
 
-type repositoryStruct struct {
+type loginRepository struct {
 	db *sql.DB
 }
 
-func NewLoginRepository(db *sql.DB) repositoryInterface {
-	return &repositoryStruct{db: db}
+func NewLoginRepository(db *sql.DB) LoginRepository {
+	return &loginRepository{db: db}
 }
 
-func (r *repositoryStruct) GetToken(userId string) (string, error) {
+func (r *loginRepository) GetToken(userId string) (string, error) {
 	row := r.db.QueryRow("SELECT token FROM session WHERE user_id = ?", userId)
 
 	var token string
@@ -35,7 +35,7 @@ func (r *repositoryStruct) GetToken(userId string) (string, error) {
 	return token, nil
 }
 
-func (r *repositoryStruct) SaveToken(userId, token string) error {
+func (r *loginRepository) SaveToken(userId, token string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
@@ -54,7 +54,7 @@ func (r *repositoryStruct) SaveToken(userId, token string) error {
 	return nil
 }
 
-func (r *repositoryStruct) UpdateToken(userId, token string) error {
+func (r *loginRepository) UpdateToken(userId, token string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
