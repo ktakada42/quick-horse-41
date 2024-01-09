@@ -8,15 +8,17 @@ import (
 
 	"app/configs"
 	"app/login"
-	"app/review"
+	reviewController "app/review/controller"
+	reviewRepository "app/review/repository"
+	reviewUseCase "app/review/usecase"
 	"app/user"
 )
 
 // ReviewControllerの初期化
-func initReviewController(db *sql.DB) review.ControllerInterface {
-	reviewRepository := review.NewReviewRepository(db)
-	reviewUseCase := review.NewReviewUseCase(reviewRepository)
-	return review.NewReviewController(reviewUseCase)
+func initReviewController(db *sql.DB) reviewController.ControllerInterface {
+	reviewRepository :=reviewRepository.NewReviewRepository(db)
+	reviewUseCase := reviewUseCase.NewReviewUseCase(reviewRepository)
+	return reviewController.NewReviewController(reviewUseCase)
 }
 
 func main() {
