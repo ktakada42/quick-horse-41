@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"app/mock/mock_review"
 	"app/review/entity"
+	"app/review/mock/mock_review"
 	"reflect"
 	"testing"
 	"time"
