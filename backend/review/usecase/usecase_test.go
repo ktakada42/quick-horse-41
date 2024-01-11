@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"app/review/entity"
-	"app/review/mock/mock_review"
+	"app/review/mock/mock_repository"
 	"errors"
 	"reflect"
 	"testing"
@@ -40,12 +40,12 @@ func timeParser(timeStr string) time.Time {
 }
 
 type mocks struct {
-	reviewRepository *mock_review.MockRepositoryInterface
+	reviewRepository *mock_repository.MockRepositoryInterface
 }
 
 func newWithMocks(t *testing.T) (UseCaseInterface, *mocks) {
 	ctrl := gomock.NewController(t)
-	mockReviewRepository := mock_review.NewMockRepositoryInterface(ctrl)
+	mockReviewRepository := mock_repository.NewMockRepositoryInterface(ctrl)
 	ruc := NewReviewUseCase(mockReviewRepository)
 	return ruc, &mocks{
 		reviewRepository: mockReviewRepository,

@@ -42,7 +42,7 @@ func timeParser(timeStr string) time.Time {
 	time, _ := time.Parse(layout, timeStr)
 	return time
 }
-func TestRepositoryGetReviews(t *testing.T) {
+func TestGetReviews(t *testing.T) {
 	t.Parallel()
 
 	// テストデータの準備

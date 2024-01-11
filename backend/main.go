@@ -16,7 +16,7 @@ import (
 
 // ReviewControllerの初期化
 func initReviewController(db *sql.DB) reviewController.ControllerInterface {
-	reviewRepository :=reviewRepository.NewReviewRepository(db)
+	reviewRepository := reviewRepository.NewReviewRepository(db)
 	reviewUseCase := reviewUseCase.NewReviewUseCase(reviewRepository)
 	return reviewController.NewReviewController(reviewUseCase)
 }
