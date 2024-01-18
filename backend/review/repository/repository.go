@@ -28,7 +28,7 @@ func (r *repositoryStruct) GetReviews(offset int, limit int) ([]entity.Review, e
 
 // rows型をReview型に紐づける
 func convertToReviews(rows *sql.Rows) ([]entity.Review, error) {
-	reviews := []entity.Review{}
+	var reviews []entity.Review
 	for rows.Next() {
 		var review entity.Review
 		if err := rows.Scan(&review.BookID, &review.ReviewID, &review.UserID, &review.Rating, &review.Review, &review.RegDate); err != nil {
