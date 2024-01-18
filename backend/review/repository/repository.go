@@ -19,7 +19,7 @@ func NewReviewRepository(db *sql.DB) RepositoryInterface {
 
 // 全てのレビューを取得する
 func (r *repositoryStruct) GetReviews(offset int, limit int) ([]entity.Review, error) {
-	rows, err := r.db.Query("SELECT * from review LIMIT ? OFFSET ?", limit, offset)
+	rows, err := r.db.Query("SELECT book_id, review_id, user_id, rating, review, reg_date from review ORDER BY reg_date DESC LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, err
 	}
