@@ -6,7 +6,7 @@ type Review struct {
 	BookID   string
 	ReviewID int
 	UserID   string
-	Rating   int8
+	Rating   uint8
 	Review   string
 	RegDate  time.Time
 }
