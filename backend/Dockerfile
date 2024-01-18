@@ -5,7 +5,7 @@ FROM golang:1.21-bookworm AS builder
 WORKDIR /app
 
 COPY go.mod ./
-# COPY go.sum ./
+COPY go.sum ./
 RUN go mod download
 
 COPY . .
@@ -25,6 +25,8 @@ CMD ["/app/app"]
 FROM golang:1.21-bookworm AS develop
 
 WORKDIR /app
+
+RUN go install github.com/golang/mock/mockgen@v1.6.0
 
 RUN go install github.com/cosmtrek/air@v1.49.0
 
