@@ -14,6 +14,8 @@ const (
 )
 
 func TestGetToken(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name        string
 		mockClosure func(mock sqlmock.Sqlmock)
@@ -47,7 +49,11 @@ func TestGetToken(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
+
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			db, mock, err := sqlmock.New()
 			if err != nil {
 				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -68,6 +74,8 @@ func TestGetToken(t *testing.T) {
 }
 
 func TestSaveToken(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name        string
 		mockClosure func(mock sqlmock.Sqlmock)
@@ -111,7 +119,11 @@ func TestSaveToken(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
+
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			db, mock, err := sqlmock.New()
 			if err != nil {
 				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -130,6 +142,8 @@ func TestSaveToken(t *testing.T) {
 }
 
 func TestUpdateToken(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name        string
 		mockClosure func(mock sqlmock.Sqlmock)
@@ -173,7 +187,11 @@ func TestUpdateToken(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
+
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			db, mock, err := sqlmock.New()
 			if err != nil {
 				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
