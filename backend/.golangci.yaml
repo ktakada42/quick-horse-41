@@ -4,3 +4,9 @@ linters:
   enable:
     - goimports
     - gofmt
+
+linters-settings:
+  errcheck:
+    exclude-functions:
+      - (*json.Encoder).Encode
+      - (*sql.Tx).Rollback
