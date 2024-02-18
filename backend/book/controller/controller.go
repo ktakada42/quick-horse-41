@@ -114,7 +114,15 @@ func (c *controllerStruct) GetOfficeBooksController(w http.ResponseWriter, r *ht
 		return
 	}
 
-	response, err := c.bu.GetOfficeBooks(queryParams.Offset, queryParams.Limit, queryParams.OfficeID, queryParams.Q, queryParams.CanBorrow, queryParams.IsAvailable, queryParams.Sort)
+	response, err := c.bu.GetOfficeBooks(r.Context(), usecase.GetOfficeBooksUsecaseInput{
+		Offset:      queryParams.Offset,
+		Limit:       queryParams.Limit,
+		OfficeID:    queryParams.OfficeID,
+		Q:           queryParams.Q,
+		CanBorrow:   queryParams.CanBorrow,
+		IsAvailable: queryParams.IsAvailable,
+		Sort:        queryParams.Sort,
+	})
 	if err != nil {
 		var httpError *utils.HttpError
 		if errors.As(err, &httpError) {
