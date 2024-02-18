@@ -3,19 +3,19 @@ package entity
 import "time"
 
 type Book struct {
-	BookId        string
+	BookID        string
 	IsBn          string
 	Title         string
 	Author        string
 	Publisher     string
 	PublishedDate string
-	CoverId       string
+	CoverID       string
 }
 
 type BookForList struct {
-	BookId      string    `json:"bookId"`
+	BookID      string    `json:"bookId"`
 	Title       string    `json:"title"`
-	CoverId     string    `json:"coverId"`
+	CoverID     string    `json:"coverId"`
 	LastRegDate time.Time `json:"lastRegDate"`
 	ReviewCount uint32    `json:"reviewCount"`
 	Rating      float32   `json:"rating"`
